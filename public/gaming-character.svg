@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 600" width="500" height="600">
+  <!-- 游戏角色 - 赛博战士 -->
+  <!-- 头部 -->
+  <g id="head">
+    <path d="M250 100 L300 150 L300 200 L250 250 L200 200 L200 150 Z" fill="#45b7d1" stroke="#000" stroke-width="2"/>
+    <!-- 面罩 -->
+    <path d="M230 170 L270 170 L270 210 L230 210 Z" fill="#111" stroke="#000" stroke-width="1"/>
+    <!-- 头盔装饰 -->
+    <path d="M250 100 L270 80 L280 100 Z" fill="#ff6b6b" stroke="#000" stroke-width="1"/>
+    <path d="M250 100 L230 80 L220 100 Z" fill="#ff6b6b" stroke="#000" stroke-width="1"/>
+    <!-- 发光眼睛 -->
+    <circle cx="240" cy="190" r="5" fill="#ff6b6b"/>
+    <circle cx="260" cy="190" r="5" fill="#ff6b6b"/>
+  </g>
+  
+  <!-- 身体 -->
+  <g id="body">
+    <path d="M250 250 L300 300 L300 400 L250 450 L200 400 L200 300 Z" fill="#333" stroke="#000" stroke-width="2"/>
+    <!-- 胸甲 -->
+    <path d="M250 270 L280 300 L280 350 L250 380 L220 350 L220 300 Z" fill="#45b7d1" stroke="#000" stroke-width="1"/>
+    <!-- 能量核心 -->
+    <circle cx="250" cy="320" r="15" fill="#ff6b6b">
+      <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- 手臂 -->
+  <g id="arms">
+    <!-- 左臂 -->
+    <path d="M200 300 L170 320 L160 380 L180 420" fill="none" stroke="#333" stroke-width="20" stroke-linecap="round"/>
+    <path d="M180 420 L170 450" fill="none" stroke="#45b7d1" stroke-width="15" stroke-linecap="round"/>
+    <!-- 右臂 -->
+    <path d="M300 300 L330 320 L340 380 L320 420" fill="none" stroke="#333" stroke-width="20" stroke-linecap="round"/>
+    <path d="M320 420 L330 450" fill="none" stroke="#45b7d1" stroke-width="15" stroke-linecap="round"/>
+    <!-- 武器 -->
+    <path d="M330 450 L360 430 L370 440 L350 470 L330 450" fill="#ff6b6b" stroke="#000" stroke-width="1"/>
+  </g>
+  
+  <!-- 腿部 -->
+  <g id="legs">
+    <!-- 左腿 -->
+    <path d="M230 450 L220 500 L230 550" fill="none" stroke="#333" stroke-width="25" stroke-linecap="round"/>
+    <path d="M230 550 L220 580" fill="none" stroke="#45b7d1" stroke-width="20" stroke-linecap="round"/>
+    <!-- 右腿 -->
+    <path d="M270 450 L280 500 L270 550" fill="none" stroke="#333" stroke-width="25" stroke-linecap="round"/>
+    <path d="M270 550 L280 580" fill="none" stroke="#45b7d1" stroke-width="20" stroke-linecap="round"/>
+  </g>
+  
+  <!-- 发光效果 -->
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  
+  <g filter="url(#glow)" opacity="0.7">
+    <circle cx="250" cy="320" r="30" fill="#45b7d1" opacity="0.3"/>
+    <circle cx="240" cy="190" r="10" fill="#ff6b6b" opacity="0.3"/>
+    <circle cx="260" cy="190" r="10" fill="#ff6b6b" opacity="0.3"/>
+  </g>
+  
+  <!-- 动画效果 -->
+  <animateTransform 
+    attributeName="transform"
+    attributeType="XML"
+    type="translate"
+    values="0,0; 0,-10; 0,0"
+    dur="3s"
+    repeatCount="indefinite"/>
+</svg>

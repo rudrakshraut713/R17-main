@@ -1,0 +1,92 @@
+/* Gaming Fonts for R17 Gaming Website */
+
+/* Import gaming-themed fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+/* Font Variables */
+:root {
+  --font-heading: 'Orbitron', sans-serif;
+  --font-subheading: 'Exo 2', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+  --font-accent: 'Audiowide', cursive;
+  --font-pixel: 'Press Start 2P', cursive;
+}
+
+/* Typography Classes */
+.heading-font {
+  font-family: var(--font-heading);
+  letter-spacing: 1px;
+}
+
+.subheading-font {
+  font-family: var(--font-subheading);
+}
+
+.body-font {
+  font-family: var(--font-body);
+}
+
+.accent-font {
+  font-family: var(--font-accent);
+}
+
+.pixel-font {
+  font-family: var(--font-pixel);
+  line-height: 1.6;
+  letter-spacing: 1px;
+}
+
+/* Apply fonts to elements */
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  letter-spacing: 1px;
+}
+
+h4, h5, h6 {
+  font-family: var(--font-subheading);
+}
+
+body, p, input, textarea, button {
+  font-family: var(--font-body);
+}
+
+.navbar .logo, .footer-logo {
+  font-family: var(--font-accent);
+}
+
+.hero-title .gradient-text {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.btn {
+  font-family: var(--font-subheading);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.marquee-content span {
+  font-family: var(--font-heading);
+  letter-spacing: 2px;
+}
+
+/* Text effects */
+.text-shadow {
+  text-shadow: 0 0 10px rgba(77, 171, 247, 0.5);
+}
+
+.text-outline {
+  -webkit-text-stroke: 1px rgba(77, 171, 247, 0.7);
+  text-stroke: 1px rgba(77, 171, 247, 0.7);
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, #4dabf7, #ff6b6b, #4ecdc4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
