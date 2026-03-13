@@ -28,41 +28,58 @@
   cursor: none;
 }
 
-.custom-cursor {
+#cursor {
   position: fixed;
-  width: 40px;
-  height: 40px;
-  border: 2px solid red;
-  border-radius: 50%;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
   z-index: 9999;
-
-  box-shadow:
-    0 0 10px red,
-    0 0 20px red,
-    0 0 30px red;
+  pointer-events: none;
 }
 
-.custom-cursor::before {
-  content: "";
-  position: absolute;
-  width: 1px;
-  height: 10px;
-  background: red;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.custom-cursor::after {
-  content: "";
-  position: absolute;
-  width: 10px;
-  height: 2px;
-  background: red;
+/* red dot */
+#cursor-dot {
+  width: 12px;
+  height: 12px;
+  background: #ff2233;
   border-radius: 50%;
-  top: 50%;
-  left: 50%;
+  position: fixed;
   transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+#cursor-dot::before {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 12px;
+  background: #ff2233;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+/* horizontal line */
+#cursor-dot::after {
+  width: 12px;
+  height: 12px;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* outer ring */
+#cursor-ring {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(255, 34, 51, 0.6);
+  border-radius: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9998;
+  transition:
+    width 0.2s,
+    height 0.2s;
 }

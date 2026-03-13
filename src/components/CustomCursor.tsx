@@ -1,24 +1,32 @@
 import { useEffect, useRef } from "react";
 
 const CustomCursor = () => {
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const pos = useRef({ x: 0, y: 0 });
+  const dotRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
+
   const mouse = useRef({ x: 0, y: 0 });
+  const ring = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const moveMouse = (e: MouseEvent) => {
       mouse.current.x = e.clientX;
       mouse.current.y = e.clientY;
+
+      if (dotRef.current) {
+        dotRef.current.style.left = mouse.current.x + "px";
+        dotRef.current.style.top = mouse.current.y + "px";
+      }
     };
 
     window.addEventListener("mousemove", moveMouse);
 
     const animate = () => {
-      pos.current.x += (mouse.current.x - pos.current.x) * 0.15;
-      pos.current.y += (mouse.current.y - pos.current.y) * 0.15;
+      ring.current.x += (mouse.current.x - ring.current.x) * 0.15;
+      ring.current.y += (mouse.current.y - ring.current.y) * 0.15;
 
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate(${pos.current.x}px, ${pos.current.y}px)`;
+      if (ringRef.current) {
+        ringRef.current.style.left = ring.current.x + "px";
+        ringRef.current.style.top = ring.current.y + "px";
       }
 
       requestAnimationFrame(animate);
@@ -29,7 +37,12 @@ const CustomCursor = () => {
     return () => window.removeEventListener("mousemove", moveMouse);
   }, []);
 
-  return <div ref={cursorRef} className="custom-cursor" />;
+  return (
+    <>
+      <div id="cursor-dot" ref={dotRef}></div>
+      <div id="cursor-ring" ref={ringRef}></div>
+    </>
+  );
 };
 
 export default CustomCursor;
