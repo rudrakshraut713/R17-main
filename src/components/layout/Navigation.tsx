@@ -1,15 +1,18 @@
-import { useState, useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { useAuth } from '../../hooks/useAuth';
-import AuthModal from '../AuthModal';
+import { useState, useEffect, useRef } from "react";
+import gsap from "gsap";
+import { useAuth } from "../../hooks/useAuth";
+import AuthModal from "../AuthModal";
+import "./Navigation.css";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const navRef = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
+  const navItemsRef = useRef<(HTMLLIElement | null)[]>([]);
   const { user, logout } = useAuth();
 
   // Handle scroll effect
@@ -18,8 +21,8 @@ const Navigation = () => {
       setIsScrolled(window.scrollY > 50);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Handle menu animations
@@ -28,18 +31,37 @@ const Navigation = () => {
 
     const ctx = gsap.context(() => {
       if (isMenuOpen) {
+        // Animate menu in
         gsap.to(menuRef.current, {
-          x: '0%',
+          x: "0%",
           opacity: 1,
-          duration: 0.5,
-          ease: 'power3.out'
+          duration: 0.6,
+          ease: "power3.out",
         });
+
+        // Animate menu items
+        gsap.fromTo(
+          ".mobile-menu li",
+          {
+            opacity: 0,
+            x: 50,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.5,
+            stagger: 0.1,
+            ease: "power2.out",
+            delay: 0.3,
+          },
+        );
       } else {
+        // Animate menu out
         gsap.to(menuRef.current, {
-          x: '100%',
+          x: "100%",
           opacity: 0,
           duration: 0.5,
-          ease: 'power3.in'
+          ease: "power3.in",
         });
       }
     }, navRef);
@@ -47,59 +69,118 @@ const Navigation = () => {
     return () => ctx.revert();
   }, [isMenuOpen]);
 
+  // Initial animation for nav items
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Animate logo
+      gsap.from(logoRef.current, {
+        y: -20,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+      });
+
+      // Animate nav items
+      gsap.from(navItemsRef.current.filter(Boolean), {
+        y: -20,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "power2.out",
+        delay: 0.2,
+      });
+
+      // Animate auth buttons
+      gsap.from(".auth-buttons", {
+        y: -20,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.6,
+        ease: "power2.out",
+      });
+    }, navRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // Hover animations for nav items
+  const handleNavHover = (index: number, isEnter: boolean) => {
+    if (navItemsRef.current[index]) {
+      gsap.to(navItemsRef.current[index], {
+        y: isEnter ? -2 : 0,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    }
+  };
+
+  const navItems = [
+    { label: "GAMES", href: "#games" },
+    { label: "TOURNAMENTS", href: "#tournaments" },
+    { label: "LEADERBOARD", href: "#leaderboard" },
+    { label: "COMMUNITY", href: "#community" },
+    { label: "NEWSLETTER", href: "#newsletter" },
+  ];
+
   return (
-    <nav 
-      ref={navRef}
-      className={`navbar ${isScrolled ? 'scrolled' : ''}`}
-    >
+    <nav ref={navRef} className={`navbar ${isScrolled ? "scrolled" : ""}`}>
       <div className="container navbar-container">
-        <div className="logo">
-          <span className="gradient-text">R17 Gaming</span>
+        <div className="logo" ref={logoRef}>
+          <span className="gradient-text">R17</span>
         </div>
 
         {/* Desktop Navigation */}
         <ul className="nav-links">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#tournaments">Tournaments</a></li>
-          <li><a href="#blog">Blog</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#contact">Contact</a></li>
+          {navItems.map((item, index) => (
+            <li
+              key={item.label}
+              ref={(el) => (navItemsRef.current[index] = el)}
+              onMouseEnter={() => handleNavHover(index, true)}
+              onMouseLeave={() => handleNavHover(index, false)}
+            >
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))}
         </ul>
 
-        {/* Auth Buttons */}
+        {/* Auth Button */}
         <div className="auth-buttons">
           {user ? (
             <div className="user-menu">
               <span className="user-email">{user.email}</span>
-              <button className="btn btn-secondary" onClick={logout}>Logout</button>
+              <button className="btn btn-secondary" onClick={logout}>
+                Logout
+              </button>
             </div>
           ) : (
-            <>
-              <button 
-                className="btn btn-secondary"
-                onClick={() => {
-                  setAuthMode('login');
-                  setShowAuthModal(true);
-                }}
+            <button
+              className="btn-pury"
+              onClick={() => {
+                setAuthMode("login");
+                setShowAuthModal(true);
+              }}
+            >
+              <span className="btn-pury-text">Login</span>
+              <svg
+                className="btn-pury-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
               >
-                Login
-              </button>
-              <button 
-                className="btn btn-primary"
-                onClick={() => {
-                  setAuthMode('register');
-                  setShowAuthModal(true);
-                }}
-              >
-                Register
-              </button>
-            </>
+                <path
+                  d="M13 7l5 5-5 5M6 12h12"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
           )}
         </div>
 
         {/* Mobile Menu Toggle */}
-        <button 
-          className={`menu-toggle ${isMenuOpen ? 'active' : ''}`}
+        <button
+          className={`menu-toggle ${isMenuOpen ? "active" : ""}`}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -111,45 +192,48 @@ const Navigation = () => {
         {/* Mobile Menu */}
         <div className="mobile-menu" ref={menuRef}>
           <ul>
-            <li><a href="#home" onClick={() => setIsMenuOpen(false)}>Home</a></li>
-            <li><a href="#tournaments" onClick={() => setIsMenuOpen(false)}>Tournaments</a></li>
-            <li><a href="#blog" onClick={() => setIsMenuOpen(false)}>Blog</a></li>
-            <li><a href="#about" onClick={() => setIsMenuOpen(false)}>About</a></li>
-            <li><a href="#contact" onClick={() => setIsMenuOpen(false)}>Contact</a></li>
+            {navItems.map((item) => (
+              <li key={item.label}>
+                <a href={item.href} onClick={() => setIsMenuOpen(false)}>
+                  {item.label}
+                </a>
+              </li>
+            ))}
             {user ? (
-              <li>
+              <li className="mobile-user-item">
                 <div className="mobile-user-menu">
                   <span className="user-email">{user.email}</span>
-                  <button className="btn btn-secondary" onClick={logout}>Logout</button>
+                  <button className="btn btn-secondary" onClick={logout}>
+                    Logout
+                  </button>
                 </div>
               </li>
             ) : (
-              <>
-                <li>
-                  <button 
-                    className="btn btn-secondary"
-                    onClick={() => {
-                      setAuthMode('login');
-                      setShowAuthModal(true);
-                      setIsMenuOpen(false);
-                    }}
+              <li className="mobile-pury-item">
+                <button
+                  className="btn-pury mobile-pury"
+                  onClick={() => {
+                    setAuthMode("register");
+                    setShowAuthModal(true);
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  <span className="btn-pury-text">Login</span>
+                  <svg
+                    className="btn-pury-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
                   >
-                    Login
-                  </button>
-                </li>
-                <li>
-                  <button 
-                    className="btn btn-primary"
-                    onClick={() => {
-                      setAuthMode('register');
-                      setShowAuthModal(true);
-                      setIsMenuOpen(false);
-                    }}
-                  >
-                    Register
-                  </button>
-                </li>
-              </>
+                    <path
+                      d="M13 7l5 5-5 5M6 12h12"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </li>
             )}
           </ul>
         </div>
@@ -162,164 +246,6 @@ const Navigation = () => {
         mode={authMode}
         onModeChange={setAuthMode}
       />
-
-      <style>{`
-        .navbar {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          z-index: 1000;
-          padding: 1rem 0;
-          transition: all var(--transition-normal);
-        }
-
-        .navbar-container {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-
-        .scrolled {
-          background: var(--glass-bg);
-          backdrop-filter: blur(10px);
-          box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-          padding: 0.75rem 0;
-        }
-
-        .logo {
-          font-size: 1.5rem;
-          font-weight: 700;
-        }
-
-        .nav-links {
-          display: flex;
-          list-style: none;
-          gap: var(--spacing-lg);
-        }
-
-        .nav-links a {
-          color: var(--text-primary);
-          font-weight: 500;
-          position: relative;
-        }
-
-        .nav-links a::after {
-          content: '';
-          position: absolute;
-          bottom: -5px;
-          left: 0;
-          width: 0;
-          height: 2px;
-          background: var(--accent-teal);
-          transition: width var(--transition-normal);
-        }
-
-        .nav-links a:hover::after {
-          width: 100%;
-        }
-
-        .auth-buttons {
-          display: flex;
-          gap: var(--spacing-md);
-          align-items: center;
-        }
-
-        .user-menu {
-          display: flex;
-          align-items: center;
-          gap: var(--spacing-md);
-        }
-
-        .user-email {
-          color: var(--text-secondary);
-          font-size: 0.9rem;
-        }
-
-        .mobile-user-menu {
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-sm);
-          align-items: center;
-        }
-
-        .menu-toggle {
-          display: none;
-          flex-direction: column;
-          justify-content: space-between;
-          width: 30px;
-          height: 21px;
-          background: transparent;
-          border: none;
-          cursor: pointer;
-          padding: 0;
-          z-index: 1001;
-        }
-
-        .menu-toggle span {
-          display: block;
-          width: 100%;
-          height: 3px;
-          background: var(--text-primary);
-          border-radius: 3px;
-          transition: all 0.3s;
-        }
-
-        .menu-toggle.active span:first-child {
-          transform: rotate(45deg) translate(6px, 6px);
-        }
-
-        .menu-toggle.active span:nth-child(2) {
-          opacity: 0;
-        }
-
-        .menu-toggle.active span:last-child {
-          transform: rotate(-45deg) translate(6px, -6px);
-        }
-
-        .mobile-menu {
-          position: fixed;
-          top: 0;
-          right: 0;
-          width: 80%;
-          max-width: 400px;
-          height: 100vh;
-          background: var(--glass-bg);
-          backdrop-filter: blur(10px);
-          z-index: 1000;
-          padding: 6rem var(--spacing-lg) var(--spacing-lg);
-          transform: translateX(100%);
-          opacity: 0;
-          display: none;
-        }
-
-        .mobile-menu ul {
-          list-style: none;
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-lg);
-        }
-
-        .mobile-menu a {
-          color: var(--text-primary);
-          font-size: 1.5rem;
-          font-weight: 500;
-        }
-
-        @media (max-width: 768px) {
-          .nav-links, .auth-buttons {
-            display: none;
-          }
-
-          .menu-toggle {
-            display: flex;
-          }
-
-          .mobile-menu {
-            display: block;
-          }
-        }
-      `}</style>
     </nav>
   );
 };

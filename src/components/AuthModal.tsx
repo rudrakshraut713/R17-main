@@ -1,46 +1,96 @@
-import { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { useState, useEffect, useRef } from "react";
+import { useAuth } from "../hooks/useAuth";
+import "./AuthModal.css"
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  mode: 'login' | 'register';
-  onModeChange: (mode: 'login' | 'register') => void;
+  mode: "login" | "register";
+  onModeChange: (mode: "login" | "register") => void;
 }
 
 const AuthModal = ({ isOpen, onClose, mode, onModeChange }: AuthModalProps) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [name, setName] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const modalRef = useRef<HTMLDivElement>(null);
   const { login, register, loading } = useAuth();
+
+  // Handle escape key press
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+
+    if (isOpen) {
+      window.addEventListener("keydown", handleEscape);
+    }
+
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [isOpen, onClose]);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
+    } else {
+      const scrollY = document.body.style.top;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.style.overflow = "";
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || "0") * -1);
+      }
+    }
+
+    return () => {
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
+    setSuccess("");
 
-    if (mode === 'register') {
+    if (mode === "register") {
       if (password !== confirmPassword) {
-        setError('Passwords do not match');
+        setError("Passwords do not match");
         return;
       }
       if (password.length < 6) {
-        setError('Password must be at least 6 characters');
+        setError("Password must be at least 6 characters");
+        return;
+      }
+      if (name.length < 2) {
+        setError("Name must be at least 2 characters");
         return;
       }
       try {
         await register(email, password);
-        onClose();
+        setSuccess("Registration successful! Welcome to R17 Gaming.");
+        setTimeout(() => onClose(), 1500);
       } catch (err) {
-        setError('Registration failed. Please try again.');
+        setError("Registration failed. Email may already be in use.");
       }
     } else {
       try {
         await login(email, password);
-        onClose();
+        setSuccess("Login successful! Welcome back.");
+        setTimeout(() => onClose(), 1500);
       } catch (err) {
-        setError('Invalid email or password');
+        setError("Invalid email or password");
       }
     }
   };
@@ -49,209 +99,252 @@ const AuthModal = ({ isOpen, onClose, mode, onModeChange }: AuthModalProps) => {
 
   return (
     <div className="auth-modal-overlay" onClick={onClose}>
-      <div className="auth-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="auth-header">
-          <h2>{mode === 'login' ? 'Login' : 'Register'}</h2>
-          <button className="close-btn" onClick={onClose}>×</button>
+      <div
+        ref={modalRef}
+        className="auth-modal"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Animated Background Elements */}
+        <div className="modal-bg-gradient"></div>
+        <div className="modal-particles"></div>
+
+        {/* Close Button */}
+        <button className="modal-close" onClick={onClose}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path
+              d="M18 6L6 18M6 6l12 12"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
+
+        {/* Header with Gaming Style */}
+        <div className="modal-header">
+          <div className="header-glow"></div>
+          <h2 className="modal-title">
+            {mode === "login" ? "WELCOME BACK" : "JOIN THE ARENA"}
+          </h2>
+          <p className="modal-subtitle">
+            {mode === "login"
+              ? "Enter the arena and continue your legacy"
+              : "Create your account and start your journey"}
+          </p>
         </div>
 
-        {error && <div className="error-message">{error}</div>}
+        {/* Status Messages - Compact */}
+        {error && (
+          <div className="message error">
+            <svg
+              className="message-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <circle cx="12" cy="12" r="10" strokeWidth="2" />
+              <path
+                d="M12 8v4M12 16h.01"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+            <span>{error}</span>
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit}>
-          {mode === 'register' && (
-            <div className="form-group">
-              <label htmlFor="name">Full Name</label>
+        {success && (
+          <div className="message success">
+            <svg
+              className="message-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <path d="M20 6L9 17l-5-5" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+            <span>{success}</span>
+          </div>
+        )}
+
+        {/* Form - Compact Layout */}
+        <form onSubmit={handleSubmit} className="auth-form">
+          {mode === "register" && (
+            <div className="form-group compact">
+              <label htmlFor="name">
+                <svg
+                  className="input-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <path
+                    d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"
+                    strokeWidth="2"
+                  />
+                  <circle cx="12" cy="7" r="4" strokeWidth="2" />
+                </svg>
+                Name
+              </label>
               <input
                 type="text"
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                placeholder="Full name"
                 required
+                className="form-input compact"
               />
             </div>
           )}
 
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
+          <div className="form-group compact">
+            <label htmlFor="email">
+              <svg
+                className="input-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <path
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                  strokeWidth="2"
+                />
+                <path d="M22 6l-10 7L2 6" strokeWidth="2" />
+              </svg>
+              Email
+            </label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="Your email"
               required
+              className="form-input compact"
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
+          <div className="form-group compact">
+            <label htmlFor="password">
+              <svg
+                className="input-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <rect
+                  x="3"
+                  y="11"
+                  width="18"
+                  height="11"
+                  rx="2"
+                  ry="2"
+                  strokeWidth="2"
+                />
+                <path d="M7 11V7a5 5 0 0110 0v4" strokeWidth="2" />
+              </svg>
+              Password
+            </label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Your password"
               required
+              className="form-input compact"
             />
           </div>
 
-          {mode === 'register' && (
-            <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password</label>
+          {mode === "register" && (
+            <div className="form-group compact">
+              <label htmlFor="confirmPassword">
+                <svg
+                  className="input-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <rect
+                    x="3"
+                    y="11"
+                    width="18"
+                    height="11"
+                    rx="2"
+                    ry="2"
+                    strokeWidth="2"
+                  />
+                  <path d="M7 11V7a5 5 0 0110 0v4" strokeWidth="2" />
+                </svg>
+                Confirm
+              </label>
               <input
                 type="password"
                 id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm password"
                 required
+                className="form-input compact"
               />
             </div>
           )}
 
-          <button 
-            type="submit" 
-            className="btn btn-primary auth-submit"
-            disabled={loading}
-          >
-            {loading ? 'Loading...' : (mode === 'login' ? 'Login' : 'Register')}
+          {mode === "login" && (
+            <div className="forgot-password">
+              <button type="button" className="forgot-link">
+                Forgot Password?
+              </button>
+            </div>
+          )}
+
+          <button type="submit" className="submit-btn" disabled={loading}>
+            {loading ? (
+              <div className="loader">
+                <div className="loader-dot"></div>
+                <div className="loader-dot"></div>
+                <div className="loader-dot"></div>
+              </div>
+            ) : (
+              <>
+                <span>
+                  {mode === "login" ? "ENTER ARENA" : "CREATE ACCOUNT"}
+                </span>
+                <svg
+                  className="btn-arrow"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" strokeWidth="2" />
+                </svg>
+              </>
+            )}
           </button>
         </form>
 
-        <div className="auth-footer">
+        {/* Footer */}
+        <div className="modal-footer">
           <p>
-            {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
-            <button 
-              className="auth-switch"
-              onClick={() => onModeChange(mode === 'login' ? 'register' : 'login')}
+            {mode === "login"
+              ? "New to R17 Gaming? "
+              : "Already have an account? "}
+            <button
+              className="switch-btn"
+              onClick={() =>
+                onModeChange(mode === "login" ? "register" : "login")
+              }
             >
-              {mode === 'login' ? 'Register' : 'Login'}
+              {mode === "login" ? "Create Account" : "Sign In"}
             </button>
           </p>
         </div>
 
-        <style>{`
-          .auth-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            padding: var(--spacing-lg);
-          }
-
-          .auth-modal {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg);
-            width: 100%;
-            max-width: 400px;
-            padding: var(--spacing-xl);
-            position: relative;
-          }
-
-          .auth-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-lg);
-          }
-
-          .auth-header h2 {
-            margin: 0;
-            color: var(--accent-teal);
-          }
-
-          .close-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all var(--transition-fast);
-          }
-
-          .close-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
-          }
-
-          .error-message {
-            background: rgba(255, 107, 107, 0.2);
-            color: var(--accent-red);
-            padding: var(--spacing-sm);
-            border-radius: var(--radius-sm);
-            margin-bottom: var(--spacing-md);
-            text-align: center;
-            border: 1px solid rgba(255, 107, 107, 0.3);
-          }
-
-          .form-group {
-            margin-bottom: var(--spacing-md);
-          }
-
-          label {
-            display: block;
-            margin-bottom: var(--spacing-xs);
-            color: var(--text-primary);
-            font-weight: 500;
-          }
-
-          input {
-            width: 100%;
-            padding: 0.75rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-sm);
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: all var(--transition-fast);
-          }
-
-          input:focus {
-            outline: none;
-            border-color: var(--accent-teal);
-            background: rgba(255, 255, 255, 0.15);
-          }
-
-          .auth-submit {
-            width: 100%;
-            margin-top: var(--spacing-md);
-          }
-
-          .auth-footer {
-            margin-top: var(--spacing-lg);
-            text-align: center;
-          }
-
-          .auth-footer p {
-            color: var(--text-secondary);
-            margin: 0;
-          }
-
-          .auth-switch {
-            background: none;
-            border: none;
-            color: var(--accent-blue);
-            cursor: pointer;
-            text-decoration: underline;
-            font-size: inherit;
-          }
-
-          .auth-switch:hover {
-            color: var(--accent-teal);
-          }
-        `}</style>
+        {/* Decorative Elements */}
+        <div className="modal-corner top-left"></div>
+        <div className="modal-corner top-right"></div>
+        <div className="modal-corner bottom-left"></div>
+        <div className="modal-corner bottom-right"></div>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
  * 图片工具函数集合
  * 提供图片处理相关的实用函数
  */
-
+export const HERO_BG_IMAGE = "https://kommodo.ai/i/rLDS4Oe0ez7rn8lpTy6K";
 /**
  * 将文件转换为Base64字符串
  * @param file - 要转换的文件对象

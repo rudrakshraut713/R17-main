@@ -1,0 +1,454 @@
+.hero {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+/* Background */
+.hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+/* Overlay */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.85) 50%,
+    rgba(0, 0, 0, 0.95) 100%
+  );
+  z-index: 1;
+}
+
+/* Animated gradient background */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background:
+    radial-gradient(
+      circle at 30% 50%,
+      rgba(255, 34, 51, 0.15) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 70% 50%,
+      rgba(255, 107, 107, 0.15) 0%,
+      transparent 50%
+    );
+  animation: rotate 30s linear infinite;
+  z-index: 0;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Content */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+}
+
+/* Title */
+.hero-title {
+  font-size: clamp(4rem, 15vw, 8rem);
+  font-weight: 900;
+  color: white;
+  margin-bottom: 1.5rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-shadow: 0 0 30px rgba(255, 34, 51, 0.5);
+  text-align: center;
+  width: 100%;
+  animation: fadeInUp 1s ease-out;
+}
+
+/* Subtitle */
+.hero-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  max-width: 800px;
+  margin: 0 auto 3rem auto;
+  line-height: 1.8;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  text-align: center;
+  padding: 0 1rem;
+  width: 100%;
+  animation: fadeInUp 1s ease-out 0.2s both;
+}
+
+/* Stats Wrapper - For centering */
+.stats-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 3rem;
+  animation: fadeInUp 1s ease-out 0.4s both;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  padding: 1.5rem 3rem;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 34, 51, 0.2);
+}
+
+/* Stat Item */
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 140px;
+}
+
+.stat-value {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 900;
+  color: #ffd700;
+  line-height: 1.2;
+  text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #8e8e8e;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Stat Divider */
+.stat-divider {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, #ff2233, transparent);
+}
+
+/* Button Wrapper - For centering */
+.button-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeInUp 1s ease-out 0.6s both;
+}
+
+/* CTA Button */
+.btn-view-tournaments {
+  position: relative;
+  padding: 1rem 3rem;
+  background: transparent;
+  border: 2px solid #ff2233;
+  border-radius: 4px;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.btn-view-tournaments::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 34, 51, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.btn-view-tournaments:hover {
+  background: #ff2233;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 34, 51, 0.3);
+}
+
+.btn-view-tournaments:hover::before {
+  left: 100%;
+}
+
+.btn-view-tournaments:hover .btn-icon {
+  transform: translateX(5px);
+}
+
+.btn-icon {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s ease;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1400px) {
+  .hero-content {
+    max-width: 1400px;
+  }
+
+  .hero-title {
+    font-size: 10rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.5rem;
+    max-width: 1000px;
+  }
+
+  .stat-value {
+    font-size: 3.2rem;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+  }
+}
+
+/* Desktop */
+@media (max-width: 1200px) {
+  .stats-grid {
+    padding: 1.5rem 2.5rem;
+  }
+
+  .stat-item {
+    min-width: 120px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+  .stats-grid {
+    padding: 1.5rem 2rem;
+    gap: 1.5rem;
+  }
+
+  .stat-item {
+    min-width: 100px;
+  }
+
+  .stat-value {
+    font-size: 2.2rem;
+  }
+}
+
+/* Mobile Landscape & Small Tablet */
+@media (max-width: 768px) {
+  .hero {
+    min-height: 100vh;
+    padding: 5rem 0;
+  }
+
+  .hero-title {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    letter-spacing: 2px;
+    padding-top: 5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .btn-view-tournaments {
+    padding: 0.875rem 2rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .hero-content {
+    padding: 1rem;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    letter-spacing: 1px;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+    padding: 0 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stats-wrapper {
+    margin-bottom: 2rem;
+  }
+
+  .stats-grid {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .stat-divider {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #ff2233, transparent);
+  }
+
+  .stat-item {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .stat-value {
+    font-size: 2.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    white-space: normal;
+  }
+
+  .btn-view-tournaments {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.85rem;
+    gap: 0.5rem;
+  }
+
+  .btn-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 360px) {
+  .hero-title {
+    font-size: 2.8rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .stats-grid {
+    padding: 1rem;
+    max-width: 240px;
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+  }
+}
+
+/* Landscape Mode */
+@media (max-height: 600px) and (orientation: landscape) {
+  .hero {
+    min-height: 120vh;
+  }
+
+  .hero-content {
+    padding: 3rem 1rem;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .stats-wrapper {
+    margin-bottom: 1rem;
+  }
+
+  .stats-grid {
+    flex-direction: row;
+    padding: 1rem 2rem;
+  }
+
+  .stat-divider {
+    width: 1px;
+    height: 30px;
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+  }
+}

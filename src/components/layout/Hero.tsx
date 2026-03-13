@@ -1,222 +1,166 @@
-import { useRef, useEffect } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import MarqueeText from '../ui/MarqueeText';
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import "./Hero.css";
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
-  // Refs for animation targets
   const heroRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Create GSAP context for proper cleanup
+    // First, ensure the title is visible by default
+    if (titleRef.current) {
+      gsap.set(titleRef.current, { opacity: 1, y: 0 });
+    }
+
     const ctx = gsap.context(() => {
-      // Initial animations
       const tl = gsap.timeline();
-      
-      tl.from(titleRef.current, {
-        y: 100,
-        opacity: 0,
-        duration: 1,
-        ease: "power4.out"
-      })
-      .from(subtitleRef.current, {
-        y: 50,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power3.out"
-      }, "-=0.6")
-      .from(ctaRef.current, {
-        y: 30,
-        opacity: 0,
-        duration: 0.6,
-        ease: "power2.out"
-      }, "-=0.4")
-      .from(imageRef.current, {
-        scale: 0.8,
-        opacity: 0,
+
+      gsap.set(heroRef.current, {
+        perspective: 1000,
+        transformStyle: "preserve-3d",
+      });
+
+      gsap.fromTo(
+        bgRef.current,
+        { scale: 1.2 },
+        { scale: 1, duration: 2, ease: "power2.out" },
+      );
+
+      // Set initial states for animation but ensure they don't hide content
+      gsap.set(titleRef.current, { opacity: 0, y: 100 });
+      gsap.set(subtitleRef.current, { opacity: 0, y: 50 });
+      gsap.set(statsRef.current, { opacity: 0, y: 40 });
+      gsap.set(buttonRef.current, { opacity: 0, y: 30, scale: 0.8 });
+
+      // Animate in with a small delay to ensure DOM is ready
+      tl.to(titleRef.current, {
+        opacity: 1,
+        y: 0,
         duration: 1.2,
-        ease: "elastic.out(1, 0.5)"
-      }, "-=0.6");
-      
-      // Floating animation for the gaming character
-      gsap.to(imageRef.current, {
-        y: "20px",
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut"
-      });
-      
-      // Parallax scrolling effect
-      gsap.to(imageRef.current, {
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true
-        },
-        y: 200,
-        ease: "none"
-      });
-      
-      // Gradient text animation
-      gsap.to(".gradient-title", {
-        backgroundPosition: "200% center",
-        duration: 10,
-        repeat: -1,
-        ease: "none"
-      });
-    }, heroRef); // Scope to heroRef
-    
-    // Cleanup function
+        ease: "power3.out",
+        delay: 0.2,
+      })
+        .to(
+          subtitleRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power2.out",
+          },
+          "-=0.8",
+        )
+        .to(
+          statsRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power2.out",
+          },
+          "-=0.4",
+        )
+        .to(
+          buttonRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.8,
+            ease: "back.out(1.7)",
+          },
+          "-=0.2",
+        );
+
+      if (bgRef.current) {
+        gsap.to(bgRef.current, {
+          y: "20%",
+          scale: 1.1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
+      }
+    }, heroRef);
+
     return () => ctx.revert();
   }, []);
 
   return (
     <section className="hero" ref={heroRef}>
-      <div className="container">
-        <div className="hero-content">
-          <div className="marquee-wrapper">
-            <MarqueeText text="LEVEL UP YOUR GAMING EXPERIENCE" speed={40} className="hero-marquee" />
-          </div>
-          <h1 ref={titleRef} className="gradient-title">
-            Welcome to <span className="gradient-text">R17 Gaming</span>
-          </h1>
-          <p ref={subtitleRef}>
-            Join the ultimate gaming community and compete in tournaments with players worldwide.
-            Experience next-level gaming with our cutting-edge platform.
-          </p>
-          <div className="cta-buttons" ref={ctaRef}>
-            <button className="btn btn-primary btn-animated">Join Tournament</button>
-            <button className="btn btn-secondary btn-animated">Explore Games</button>
-          </div>
-          <div className="marquee-wrapper bottom-marquee">
-            <MarqueeText text="TOURNAMENTS • STREAMS • COMMUNITY • EVENTS" speed={30} direction="right" className="hero-marquee" />
+      <div
+        ref={bgRef}
+        className="hero-bg"
+        style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
+        }}
+      />
+
+      <div ref={overlayRef} className="hero-overlay" />
+
+      <div className="hero-content">
+        <h1 ref={titleRef} className="hero-title">
+          DOMINATE THE ARENA
+        </h1>
+
+        <p ref={subtitleRef} className="hero-subtitle">
+          Elite competitive gaming. Forge your legacy. Rise through the ranks
+          and claim glory in the world's most intense tournaments.
+        </p>
+
+        {/* Stats Grid - Perfectly Centered */}
+        <div ref={statsRef} className="stats-wrapper">
+          <div className="stats-grid">
+            <div className="stat-item">
+              <span className="stat-value">4.2M</span>
+              <span className="stat-label">ACTIVE PLAYERS</span>
+            </div>
+            <div className="stat-divider"></div>
+            <div className="stat-item">
+              <span className="stat-value">$2.8M</span>
+              <span className="stat-label">PRIZE POOL</span>
+            </div>
+            <div className="stat-divider"></div>
+            <div className="stat-item">
+              <span className="stat-value">340+</span>
+              <span className="stat-label">TOURNAMENTS</span>
+            </div>
           </div>
         </div>
-        <div className="hero-image">
-          <img 
-            src="/gaming-character.svg" 
-            alt="Gaming Character" 
-            ref={imageRef}
-            onError={(e) => {
-              // Fallback if image doesn't exist yet
-              e.currentTarget.src = "https://placehold.co/400x500/45b7d1/ffffff?text=Gaming+Character";
-            }}
-          />
-        </div>
+
+        {/* CTA Button */}
+        {/* <div ref={buttonRef} className="button-wrapper">
+          <button className="btn-view-tournaments">
+            VIEW TOURNAMENTS
+            <svg
+              className="btn-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <path
+                d="M9 5l7 7-7 7"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div> */}
       </div>
-      
-      <style jsx>{`
-        .hero {
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          position: relative;
-          overflow: hidden;
-          padding: var(--spacing-xl) 0;
-        }
-        
-        .hero-content {
-          max-width: 600px;
-          z-index: 1;
-        }
-        
-        .gradient-title {
-          font-size: 4rem;
-          line-height: 1.1;
-          margin-bottom: var(--spacing-lg);
-          background: linear-gradient(
-            90deg, 
-            var(--accent-red), 
-            var(--accent-blue), 
-            var(--accent-teal), 
-            var(--accent-red)
-          );
-          background-size: 300% 100%;
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-        }
-        
-        .hero p {
-          font-size: 1.2rem;
-          margin-bottom: var(--spacing-lg);
-          color: var(--text-secondary);
-        }
-        
-        .cta-buttons {
-          display: flex;
-          gap: var(--spacing-md);
-          margin-top: var(--spacing-lg);
-        }
-        
-        .hero-image {
-          position: absolute;
-          right: 0;
-          bottom: 0;
-          width: 40%;
-          max-width: 500px;
-          z-index: 0;
-        }
-        
-        .hero-image img {
-          width: 100%;
-          height: auto;
-          filter: drop-shadow(0 0 20px rgba(69, 183, 209, 0.3));
-        }
-        
-        @media (max-width: 1024px) {
-          .gradient-title {
-            font-size: 3rem;
-          }
-          
-          .hero-image {
-            width: 35%;
-          }
-        }
-        
-        @media (max-width: 768px) {
-          .hero {
-            text-align: center;
-          }
-          
-          .hero-content {
-            max-width: 100%;
-          }
-          
-          .cta-buttons {
-            justify-content: center;
-          }
-          
-          .hero-image {
-            position: relative;
-            width: 70%;
-            margin: var(--spacing-xl) auto 0;
-          }
-        }
-        
-        @media (max-width: 480px) {
-          .gradient-title {
-            font-size: 2.5rem;
-          }
-          
-          .cta-buttons {
-            flex-direction: column;
-          }
-          
-          .hero-image {
-            width: 90%;
-          }
-        }
-      `}</style>
     </section>
   );
 };
