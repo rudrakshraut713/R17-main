@@ -213,7 +213,7 @@ const Navigation = () => {
                 <button
                   className="btn-pury mobile-pury"
                   onClick={() => {
-                    setAuthMode("register");
+                    setAuthMode("login");
                     setShowAuthModal(true);
                     setIsMenuOpen(false);
                   }}

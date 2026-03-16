@@ -1,5 +1,4 @@
 :root {
-  /* Custom color variables from image */
   --red: #ff2233;
   --red-dim: #aa0011;
   --gold: #ffd700;
@@ -9,17 +8,14 @@
   --text: #8e8e8e;
   --muted: #777777;
 
-  /* Typography */
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  /* Color scheme */
   color-scheme: dark;
   color: var(--text);
   background-color: var(--bg);
 
-  /* Rendering optimization */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -36,40 +32,26 @@
   pointer-events: none;
 }
 
-/* red dot */
 #cursor-dot {
-  width: 12px;
-  height: 12px;
-  background: #ff2233;
-  border-radius: 50%;
+  width: 16px;
+  height: 16px;
   position: fixed;
   transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 9999;
+
+  background-image: url("https://img.sanishtech.com/u/1bb8f2cc52851855dbf36b5416376a30.png");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 0 5px var(--red));
 }
 
-#cursor-dot::before {
-  content: "";
-  position: absolute;
-  width: 2px;
-  height: 12px;
-  background: #ff2233;
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%);
-}
-
-/* horizontal line */
+#cursor-dot::before,
 #cursor-dot::after {
-  width: 12px;
-  height: 12px;
-  position: fixed;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 9999;
+  display: none;
 }
 
-/* outer ring */
 #cursor-ring {
   width: 36px;
   height: 36px;
@@ -79,7 +61,42 @@
   transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 9998;
-  transition:
-    width 0.2s,
-    height 0.2s;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  display: block;
+}
+
+#cursor-ring::before,
+#cursor-ring::after {
+  display: none;
+}
+
+/* Hide cursor when leaving window */
+#cursor.hidden #cursor-dot,
+#cursor.hidden #cursor-ring {
+  opacity: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #cursor-dot {
+    width: 14px;
+    height: 14px;
+  }
+
+  #cursor-ring {
+    width: 32px;
+    height: 32px;
+  }
+
+}
+
+@media (max-width: 480px) {
+  #cursor {
+    display: none;
+  }
+
+  body {
+    cursor: auto;
+  }
 }
