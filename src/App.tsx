@@ -14,6 +14,7 @@ import Community from "./components/Community";
 import Newsletter from "./components/Newsletter";
 import Footer from "./components/ui/Footer";
 import CustomCursor from "./components/CustomCursor";
+import AnnouncementBar from "./components/ui/AnnouncementBar";
 
 // Lazy load components for performance optimization
 // const ThreeBackground = lazy(
@@ -88,6 +89,7 @@ function App() {
           <Navigation />
           <main>
             <Hero />
+            <AnnouncementBar speed={25} pauseOnHover={true} />
             <TournamentSection />
             <GameSection />
             {/* <BlogSection /> */}
