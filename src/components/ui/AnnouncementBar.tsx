@@ -87,24 +87,6 @@ const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
           )}
         </div>
       </div>
-
-      {/* Second marquee for seamless loop (optional) */}
-      <div
-        className="announcement-marquee-2"
-        ref={marquee2Ref}
-        aria-hidden="true"
-      >
-        <div className="announcement-content">
-          {announcements.map((item, index) =>
-            renderAnnouncementItem(item, index),
-          )}
-        </div>
-        <div className="announcement-content">
-          {announcements.map((item, index) =>
-            renderAnnouncementItem(item, index),
-          )}
-        </div>
-      </div>
     </div>
   );
 };
